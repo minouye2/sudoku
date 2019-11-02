@@ -194,7 +194,8 @@ isSequenceValid s = [xs | xs <- s, xs > 0] == nub [xs | xs <- s, xs > 0 ]
 -- input: a board
 -- output: True/False
 -- hint: use list comprehension and isSequenceValid
--- areRowsValid :: Board -> Bool
+areRowsValid :: Board -> Bool
+areRowsValid b = and [isSequenceValid xs | xs <- b]
 
 -- TODO #9
 -- name: areColsValid
@@ -202,7 +203,8 @@ isSequenceValid s = [xs | xs <- s, xs > 0] == nub [xs | xs <- s, xs > 0 ]
 -- input: a board
 -- output: True/False
 -- hint: use areRowsValid of the transposed board
--- areColsValid :: Board -> Bool
+areColsValid :: Board -> Bool
+areColsValid b = areRowsValid (transpose b)
 
 -- TODO #10
 -- name: areBoxesValid
