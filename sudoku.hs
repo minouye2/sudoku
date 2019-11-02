@@ -174,7 +174,8 @@ getEmptySpot b = head [(x, y) | x <- [0..8], y <- [0..8], (b !! x) !! y == 0]
 --   [0,0,4,1,9,0,0,5],
 --   [0,0,0,8,0,0,7,9] ] returns False
 -- hint: use getNRows and getNCols
--- isGridValid :: Board -> Bool
+isGridValid :: Board -> Bool
+isGridValid b = getNRows b == getNCols b
 
 -- TODO #7
 -- name: isSequenceValid
@@ -184,7 +185,8 @@ getEmptySpot b = head [(x, y) | x <- [0..8], y <- [0..8], (b !! x) !! y == 0]
 -- example 1: isSequenceValid [5,3,0,0,7,0,0,0,0] yields True
 -- example 2: isSequenceValid [5,3,0,5,7,0,0,0,0] yields False
 -- hint: build a list with the digits from the given sequence that are different than zero; then determine whether there are digits that repeats in the created list
--- isSequenceValid :: Sequence -> Bool
+isSequenceValid :: Sequence -> Bool
+isSequenceValid s = [xs | xs <- s, xs > 0] == nub [xs | xs <- s, xs > 0 ]
 
 -- TODO #8
 -- name: areRowsValid
