@@ -12,8 +12,7 @@ type Board    = [Sequence]
 
 -- ***** HELPER FUNCTIONS *****
 
--- https://stackoverflow.com/questions/8529814/get-a-sublist-in-haskell/8529869
-slice s b e = (drop b . take e) s
+
 
 -- name: toInt
 -- description: converts given parameter to integer
@@ -117,7 +116,10 @@ getNCols b
 --   [0,6,0,0,0,0,2,8,0],
 --   [0,0,0,4,1,9,0,0,5],
 --   [0,0,0,0,8,0,0,7,9] ] 1 1 yields [0,8,0,6,0,2,0,3,0]
--- hint: use list comprehension to filter the rows of the target box; then transpose what you got and apply the same reasoning to filter the columns; use concat to return the sequence
+-- hint: use list comprehension to filter the rows of the target box; then transpose what you got and
+-- apply the same reasoning to filter the columns; use concat to return the sequence
+-- https://stackoverflow.com/questions/8529814/get-a-sublist-in-haskell/8529869
+slice s b e = (drop b . take e) s
 getBox :: Board -> Int -> Int -> Sequence
 getBox b x y = concat [ slice xs (x*3) (x*3+3) | xs <- (slice b (y*3) (y*3+3)) ]
 
