@@ -6,12 +6,13 @@
 import System.Environment
 import System.IO
 import Data.List
-import Data.Array
 
 type Sequence = [Int]
 type Board    = [Sequence]
 
 -- ***** HELPER FUNCTIONS *****
+
+slice s b e = (drop b . take e) s
 
 -- name: toInt
 -- description: converts given parameter to integer
@@ -99,6 +100,7 @@ getNCols :: Board -> Int
 getNCols b
   | all (==length (head b)) [length xs | xs <- b] = length (head b)
   | otherwise = 0
+
 -- TODO #4
 -- name: getBox
 -- description: given a board and box coordinates, return the correspondent box as a sequence
@@ -115,8 +117,8 @@ getNCols b
 --   [0,0,0,4,1,9,0,0,5],
 --   [0,0,0,0,8,0,0,7,9] ] 1 1 yields [0,8,0,6,0,2,0,3,0]
 -- hint: use list comprehension to filter the rows of the target box; then transpose what you got and apply the same reasoning to filter the columns; use concat to return the sequence
--- getBox :: Board -> Int -> Int -> Sequence
--- getBox b x y = [ xs | xs <- b, xs `mod` ? == ?]
+getBox :: Board -> Int -> Int -> Sequence
+getBox b x y = concat [ slice xs (x*3) (x*3+3) | xs <- (slice b (y*3) (y*3+3)) ]
 
 -- TODO #5
 -- name: getEmptySpot
@@ -212,7 +214,8 @@ areColsValid b = areRowsValid (transpose b)
 -- input: a board
 -- output: True/False
 -- hint: use list comprehension, isSequenceValid, and getBox
--- areBoxesValid :: Board -> Bool
+areBoxesValid :: Board -> Bool
+areBoxesValid b = areRowsValid [getBox b x y | x <- [0..2], y <- [0..2]]
 
 -- TODO #11
 -- name: isValid
@@ -220,7 +223,8 @@ areColsValid b = areRowsValid (transpose b)
 -- input: a board
 -- output: True/False
 -- hint: use isGridValid, areRowsValid, areColsValid, and areBoxesValid
--- isValid :: Board -> Bool
+isValid :: Board -> Bool
+isValid b = areColsValid b && areRowsValid b && areBoxesValid b && isGridValid b
 
 -- TODO #12
 -- name: isCompleted
@@ -228,14 +232,16 @@ areColsValid b = areRowsValid (transpose b)
 -- input: a board
 -- output: True/False
 -- hint: use list comprehension and the elem function
--- isCompleted :: Board -> Bool
+isCompleted :: Board -> Bool
+isCompleted b = not (elem 0 (concat b))
 
 -- TODO #13
 -- name: isSolved
 -- description: return True/False depending whether the given board is solved or not; a board is solved if it is completed and still valid
 -- input: a board
 -- output: True/False
--- isSolved :: Board -> Bool
+isSolved :: Board -> Bool
+isSolved b = isCompleted b && isValid b
 
 -- ***** SETTER FUNCTIONS *****
 
@@ -247,7 +253,10 @@ areColsValid b = areRowsValid (transpose b)
 -- example 1: setRowAt [1, 2, 3, 0, 4, 5] 3 9 yields [1,2,3,9,4,5]
 -- example 2: setRowAt [1, 2, 3, 8, 4, 5] 3 9 yields [1,2,3,8,4,5]
 -- hint: use concatenation, take, and drop
--- setRowAt :: Sequence -> Int -> Int -> Sequence
+setRowAt :: Sequence -> Int -> Int -> Sequence
+setRowAt s i v
+  | s !! i == 0 = (concat [take i s, [v], drop (i+1) s])
+  | otherwise = s
 
 -- TODO #15
 -- name: setBoardAt
@@ -274,7 +283,8 @@ areColsValid b = areRowsValid (transpose b)
 --   [0,0,0,4,1,9,0,0,5],
 --   [0,0,0,0,8,0,0,7,9] ]
 -- hint: use concatenation and setRowAt
--- setBoardAt :: Board -> Int -> Int -> Int -> Board
+setBoardAt :: Board -> Int -> Int -> Int -> Board
+setBoardAt b i j v = (concat [take i b, [setRowAt (b !! i) j v], drop (i+1) b])
 
 -- TODO #16
 -- name: buildChoices
@@ -322,23 +332,25 @@ areColsValid b = areRowsValid (transpose b)
 --   [0,0,0,0,8,0,0,7,9] ]
 -- ]
 -- hint: use list comprehension and the function setBoardAt
--- buildChoices :: Board -> Int -> Int -> [Board]
+buildChoices :: Board -> Int -> Int -> [Board]
+buildChoices b i j = [ setBoardAt b i j v | v <- [1..9] ]
 
 -- name: solve
 -- description: given a board, finds all possible solutions (note that dead ends or invalid intermediate solutions are listed as empty boards)
 -- input: a board
 -- output: a list of boards from the original board
 -- note: this code is given to you (just uncomment it when you are ready to test the solver)
--- solve :: Board -> [Board]
--- solve board
---   | isSolved board = [board]
---   | isCompleted board = [[[]]]
---   | not (isValid board) = [[[]]]
---   | otherwise = concat [ solve choice | choice <- buildChoices board i j ]
---     where
---       emptySpot = getEmptySpot board
---       i = fst emptySpot
---       j = snd emptySpot
+solve :: Board -> [Board]
+solve board
+  | isSolved board = [board]
+  | isCompleted board = [[[]]]
+  | not (isValid board) = [[[]]]
+  | otherwise = concat [ solve choice | choice <- buildChoices board i j ]
+    where
+      emptySpot = getEmptySpot board
+      i = fst emptySpot
+      j = snd emptySpot
+      
 
 -- program starts here
 main = do
