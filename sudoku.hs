@@ -12,6 +12,7 @@ type Board    = [Sequence]
 
 -- ***** HELPER FUNCTIONS *****
 
+-- Got this from Gil
 slice s b e = (drop b . take e) s
 
 -- name: toInt
@@ -350,19 +351,26 @@ solve board
       emptySpot = getEmptySpot board
       i = fst emptySpot
       j = snd emptySpot
+
+validChoices b = [ v | v <- solve b, length v > 1]
       
 
 -- program starts here
 main = do
 
   -- TODO #17: validate the command-line and get the file name containing the board
+  myArgs <- getArgs
 
   -- TODO #18: read the contents of the board file into a string
+  f <- openFile "board.txt" ReadMode
+  contents <- hGetContents f
 
   -- TODO #19: create a board from the string board (hint: use getBoard)
+  let b = getBoard contents
 
   -- TODO #20: use solve to find the solutions, disconsidering the ones that are [[]]
-
+  let q = validChoices b
+  
   -- TODO #21: print the solutions found
-
+  print q
   print "Done!"
