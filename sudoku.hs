@@ -1,6 +1,6 @@
 -- CS3210 - Principles of Programming Languages - Fall 2019
 -- Programming Assignment 02 - A Sudoku Solver
--- Author(s): Marc Inouye
+-- Author(s): Marc Inouye, Fernando Babonoyaba
 -- Date: 10/21/19
 
 import System.Environment
@@ -12,7 +12,7 @@ type Board    = [Sequence]
 
 -- ***** HELPER FUNCTIONS *****
 
--- Got this from Gil
+-- https://stackoverflow.com/questions/8529814/get-a-sublist-in-haskell/8529869
 slice s b e = (drop b . take e) s
 
 -- name: toInt
@@ -139,7 +139,6 @@ getBox b x y = concat [ slice xs (x*3) (x*3+3) | xs <- (slice b (y*3) (y*3+3)) ]
 -- hint: use list comprehension to generate all the coordinates of the board that are empty; use head to return the first coordinate of your list
 getEmptySpot :: Board -> (Int, Int)
 getEmptySpot b = head [(x, y) | x <- [0..8], y <- [0..8], (b !! x) !! y == 0]
--- getEmptySpot board = [ (x, y) | (y, row) <- board, (x, col) <- row, col == 0]
 
 -- ***** PREDICATE FUNCTIONS *****
 
@@ -362,7 +361,7 @@ main = do
   myArgs <- getArgs
 
   -- TODO #18: read the contents of the board file into a string
-  f <- openFile "board.txt" ReadMode
+  f <- openFile (myArgs !! 0) ReadMode
   contents <- hGetContents f
 
   -- TODO #19: create a board from the string board (hint: use getBoard)
@@ -370,7 +369,7 @@ main = do
 
   -- TODO #20: use solve to find the solutions, disconsidering the ones that are [[]]
   let q = validChoices b
-  
+
   -- TODO #21: print the solutions found
   print q
   print "Done!"
