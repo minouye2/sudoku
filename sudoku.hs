@@ -288,7 +288,8 @@ setBoardAt b i j v = (concat [take i b, [setRowAt (b !! i) j v], drop (i+1) b])
 
 -- TODO #16
 -- name: buildChoices
--- description: given a board and a two indexes i and j (representing coordinates), generate ALL possible boards, replacing the cell at (i, j) with ALL possible digits from 1 to 9; OK to assume that the cell at (i, j) is empty
+-- description: given a board and a two indexes i and j (representing coordinates), generate ALL possible boards, replacing the 
+-- cell at (i, j) with ALL possible digits from 1 to 9; OK to assume that the cell at (i, j) is empty
 -- input: a board and two indexes (i, j)
 -- output: a list of boards from the original board
 -- example: buildChoices
@@ -351,8 +352,6 @@ solve board
       i = fst emptySpot
       j = snd emptySpot
 
-validChoices b = [ v | v <- solve b, length v > 1]
-      
 
 -- program starts here
 main = do
@@ -368,8 +367,8 @@ main = do
   let b = getBoard contents
 
   -- TODO #20: use solve to find the solutions, disconsidering the ones that are [[]]
-  let q = validChoices b
+  let solution = [ v | v <- solve b, length v > 1]
 
   -- TODO #21: print the solutions found
-  print q
+  print solution
   print "Done!"
